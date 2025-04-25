@@ -7,7 +7,7 @@ using Server.Data.ShopDb;
 
 
 namespace Server.Data {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser> {
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {
 
         public ApplicationDbContext (DbContextOptions<ApplicationDbContext> options) : base(options) {
         }
@@ -30,10 +30,29 @@ namespace Server.Data {
                 new Description { Id = 1, Name = "Samsung" },
                 new Description { Id = 2, Name = "Toshiba" });
 
-            //modelBuilder.Entity<ApplicationUser>()
-            //   .HasOne(u => u.Cart)
-            //   .WithOne(c => c.ApplicationUserId)
-            //   .HasForeignKey<Cart>(c => c.ApplicationUserId);
+            modelBuilder.Entity<Product>().HasData(
+                new Product {
+                    Id = 1,
+                    Name = "Ноутбук",
+                    Quantity = 2,
+                    ImagePath = null,
+                    Price = 15000,
+                    CategoryId = 1,
+                    DescriptionId = 1
+                });
+
+
+            modelBuilder.Entity<Cart>()
+                .HasOne<ApplicationUser>()
+                .WithOne() 
+                .HasForeignKey<Cart>(c => c.ApplicationUserId)
+                .IsRequired() 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Cart>()
+                .HasIndex(c => c.ApplicationUserId)
+                .IsUnique();
+
         }
     }
 }
